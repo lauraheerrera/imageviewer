@@ -1,38 +1,41 @@
 package software.ulpgc.imageviewer;
 
-import software.ulpgc.imageviewer.io.FileImageLoader;
-import software.ulpgc.imageviewer.io.ImageLoader;
-import software.ulpgc.imageviewer.model.Image;
-
-import java.io.File;
+import software.ulpgc.imageviewer.view.ViewPort;
 
 public class Main {
     public static void main(String[] args) {
-        File folder = new File("C:\\Users\\Usuario\\Downloads\\Imagenes");
+        int viewportWidth = 800;
+        int viewportHeight = 600;
 
-        if (folder.exists() && folder.isDirectory()) {
-            ImageLoader imageLoader = new FileImageLoader(folder);
+        ViewPort viewport = ViewPort.ofSize(viewportWidth, viewportHeight);
+        System.out.println("ViewPort inicial: " + viewport + "\n");
 
-            Image image = imageLoader.load();
+        int imageWidth = 800;
+        int imageHeight = 600;
 
-            System.out.println("Imagen cargada:");
-            System.out.println("Nombre: " + image.name());
-            System.out.println("Formato: " + image.format());
-            System.out.println("Contenido (bytes): " + image.content().length + " bytes");
+        ViewPort adjustedViewport = viewport.fit(imageWidth, imageHeight);
+        System.out.println("Caso 1 - Imagen con las dimensiones del ViewPort:");
+        System.out.println("ViewPort ajustado: " + adjustedViewport + "\n");
 
-            System.out.println("\nNavegando a la siguiente imagen...");
-            image = image.next();
-            System.out.println("Nombre de la siguiente imagen: " + image.name());
+        imageWidth = 1600;
+        imageHeight = 600;
 
-            System.out.println("\nNavegando a la siguiente imagen...");
-            image = image.next();
-            System.out.println("Nombre de la siguiente imagen: " + image.name());
+        adjustedViewport = viewport.fit(imageWidth, imageHeight);
+        System.out.println("Caso 2 - Imagen más ancha que el ViewPort:");
+        System.out.println("ViewPort ajustado: " + adjustedViewport + "\n");
 
-            System.out.println("\nNavegando a la imagen anterior...");
-            image = image.previous();
-            System.out.println("Nombre de la imagen anterior: " + image.name());
-        } else {
-            System.out.println("La carpeta no existe o no es válida.");
-        }
+        imageWidth = 400;
+        imageHeight = 300;
+
+        adjustedViewport = viewport.fit(imageWidth, imageHeight);
+        System.out.println("Caso 3 - Imagen más pequeña que el ViewPort:");
+        System.out.println("ViewPort ajustado: " + adjustedViewport + "\n");
+
+        imageWidth = 600;
+        imageHeight = 1200;
+
+        adjustedViewport = viewport.fit(imageWidth, imageHeight);
+        System.out.println("Caso 4 - Imagen más alta que el ViewPort:");
+        System.out.println("ViewPort ajustado: " + adjustedViewport + "\n");
     }
 }
