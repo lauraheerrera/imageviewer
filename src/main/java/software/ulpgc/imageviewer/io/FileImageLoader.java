@@ -25,10 +25,6 @@ public class FileImageLoader implements ImageLoader {
 
     private Image imageAt(int index) {
         return new Image() {
-            @Override
-            public String name() {
-                return currentFile().getName();
-            }
 
             @Override
             public byte[] content() {
@@ -37,10 +33,6 @@ public class FileImageLoader implements ImageLoader {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            @Override
-            public Format format() {
-                return Format.valueOf(camelCase(extensionOf(currentFile().getName())));
             }
 
             @Override
@@ -65,15 +57,6 @@ public class FileImageLoader implements ImageLoader {
                 return index > 0 ? index - 1 : files.length - 1;
             }
         };
-    }
-
-    private static String camelCase(String text) {
-        return text.toUpperCase().charAt(0) +
-                text.toLowerCase().substring(1);
-    }
-
-    private String extensionOf(String name) {
-        return name.substring(name.lastIndexOf(".") + 1);
     }
 
     private FileFilter ofTypeImage() {
