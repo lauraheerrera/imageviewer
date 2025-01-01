@@ -13,31 +13,43 @@ public class MainFrame extends JFrame {
     private final SwingImageDisplay imageDisplay;
     private final Map<String, Command> commandMap;
 
-    private MainFrame() throws HeadlessException {
-        this.commandMap = new HashMap<>();
+    private MainFrame() {
         this.setTitle("Image Viewer");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
-        this.add(imageDisplay = createImageDisplay());
-        this.add(toolBar(), BorderLayout.SOUTH);
+
+        this.commandMap = new HashMap<>();
+        this.imageDisplay = createImageDisplay();
+        JScrollPane scrollPane = new JScrollPane(imageDisplay);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(createToolBar(), BorderLayout.SOUTH);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     }
 
-    private Component toolBar() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        panel.add(button("<<"));
-        panel.add(button(">>"));
+    private Component createToolBar() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.add(createButton("<<"));
+        panel.add(createButton(">>"));
+        panel.add(createButton("\uD83D\uDD0D\u2795"));
+        panel.add(createButton("\uD83D\uDD0D\u2796"));
         return panel;
     }
 
-    private Component button(String name) {
-        JButton button = new JButton(name);
-        button.addActionListener(_ -> commandMap.get(name).execute());
+    private Component createButton(String commandName) {
+        JButton button = new JButton(commandName);
+        button.addActionListener(_ -> executeCommand(commandName));
         return button;
     }
 
+    private void executeCommand(String commandName) {
+        Command command = commandMap.get(commandName);
+        if (command != null) {
+            command.execute();
+        }
+    }
     private SwingImageDisplay createImageDisplay() {
         return new SwingImageDisplay(new SwingImageDeserializer());
     }

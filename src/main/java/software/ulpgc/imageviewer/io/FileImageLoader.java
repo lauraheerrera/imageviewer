@@ -25,6 +25,7 @@ public class FileImageLoader implements ImageLoader {
 
     private Image imageAt(int index) {
         return new Image() {
+            private int zoomLevel = 100;
 
             @Override
             public byte[] content() {
@@ -43,6 +44,21 @@ public class FileImageLoader implements ImageLoader {
             @Override
             public Image previous() {
                 return imageAt(nextIndex());
+            }
+
+            @Override
+            public int zoomLevel() {
+                return zoomLevel;
+            }
+
+            @Override
+            public void zoomIn() {
+                zoomLevel = Math.min(zoomLevel + 10, 500);
+            }
+
+            @Override
+            public void zoomOut() {
+                zoomLevel = Math.max(zoomLevel - 10, 10);
             }
 
             private File currentFile() {

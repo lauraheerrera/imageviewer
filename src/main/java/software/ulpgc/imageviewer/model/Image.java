@@ -5,6 +5,10 @@ public interface Image {
     Image next();
     Image previous();
 
+    int zoomLevel();
+    void zoomIn();
+    void zoomOut();
+
     enum Format {
         Jpg, Jpeg, Png, Gif
     }
