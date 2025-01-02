@@ -7,7 +7,6 @@ import software.ulpgc.imageviewer.view.ViewPort;
 
 import javax.swing.*;
 import java.awt.*;
-
 public class SwingImageDisplay extends JPanel implements ImageDisplay {
     private final ImageDeserializer deserializer;
     private Image image;
@@ -16,7 +15,6 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
         this.deserializer = deserializer;
     }
 
-    @Override
     public Image currentImage() {
         return image;
     }
@@ -24,7 +22,6 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     @Override
     public void show(Image image) {
         this.image = image;
-        this.setPreferredSize(calculateNewSize());
         this.revalidate();
         this.repaint();
     }
@@ -40,13 +37,17 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     private void drawImage(Graphics g) {
         if (image == null) return;
         java.awt.Image image = deserialize();
+        Dimension imageSize = calculateNewSize();
+
         ViewPort viewPort = ViewPort.ofSize(getWidth(), getHeight())
-                .fit(image.getWidth(null) * this.image.zoomLevel() / 100,
-                        image.getHeight(null) * this.image.zoomLevel() / 100);
-        g.drawImage(image, viewPort.x(), viewPort.y(), viewPort.width(), viewPort.height(), null);
+                .fit(imageSize.width, imageSize.height, this.image.zoomLevel());
+        int xOffset = (getWidth() - viewPort.width()) / 2;
+        int yOffset = (getHeight() - viewPort.height()) / 2;
+
+        g.drawImage(image, xOffset, yOffset, viewPort.width(), viewPort.height(), null);
     }
 
-    private java.awt.Image deserialize() {
+    public java.awt.Image deserialize() {
         return (java.awt.Image) deserializer.desearilize(image.content());
     }
 
@@ -59,5 +60,4 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
         int newHeight = originalHeight * image.zoomLevel() / 100;
         return new Dimension(newWidth, newHeight);
     }
-
 }

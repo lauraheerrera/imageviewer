@@ -22,11 +22,8 @@ public class MainFrame extends JFrame {
 
         this.commandMap = new HashMap<>();
         this.imageDisplay = createImageDisplay();
-        JScrollPane scrollPane = new JScrollPane(imageDisplay);
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(imageDisplay, BorderLayout.CENTER);
         this.add(createToolBar(), BorderLayout.SOUTH);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     }
 
     private Component createToolBar() {

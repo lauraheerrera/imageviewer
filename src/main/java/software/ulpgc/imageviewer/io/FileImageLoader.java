@@ -25,7 +25,7 @@ public class FileImageLoader implements ImageLoader {
 
     private Image imageAt(int index) {
         return new Image() {
-            private int zoomLevel = 100;
+            private int zoomLevel = 50;
 
             @Override
             public byte[] content() {

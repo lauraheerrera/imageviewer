@@ -1,16 +1,20 @@
 package software.ulpgc.imageviewer.view;
-
 public record ViewPort(int x, int y, int width, int height) {
     public static ViewPort ofSize(int width, int height) {
         return new ViewPort(0, 0, width, height);
     }
 
-    public ViewPort fit(int width, int height) {
-        if (canFit(width, height)) return centeredViewPort(width, height);
+    public ViewPort fit(int imageWidth, int imageHeight, int zoomLevel) {
+        int zoomedWidth = imageWidth * zoomLevel / 100;
+        int zoomedHeight = imageHeight * zoomLevel / 100;
 
-        return shouldScaleWidth(width, height) ?
-                fitToWidthViewPort(width, height) :
-                fitToHeightViewPort(width, height);
+        if (canFit(zoomedWidth, zoomedHeight)) {
+            return centeredViewPort(zoomedWidth, zoomedHeight);
+        }
+
+        return shouldScaleWidth(zoomedWidth, zoomedHeight) ?
+                fitToWidthViewPort(zoomedWidth, zoomedHeight) :
+                fitToHeightViewPort(zoomedWidth, zoomedHeight);
     }
 
     private boolean shouldScaleWidth(int width, int height) {
