@@ -7,6 +7,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -14,8 +15,20 @@ import static java.util.Objects.requireNonNull;
 public class FileImageLoader implements ImageLoader {
     private final File[] files;
 
-    public FileImageLoader(File folder) {
-        this.files = requireNonNull(folder.listFiles(ofTypeImage()));
+    public FileImageLoader() {
+        try {
+            File folder = new File(Objects.requireNonNull(
+                    getClass().getClassLoader().getResource("Images"),
+                    "Folder 'Imagenes' not found in resources"
+            ).toURI());
+
+            this.files = folder.listFiles();
+            if (this.files == null || this.files.length == 0) {
+                throw new IllegalArgumentException("No valid image files in folder: " + folder.getPath());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error accessing folder 'Imagenes'", e);
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class Main {
                 .setVisible(true);
     }
     private static Image firstImage() {
-        return new FileImageLoader(new File("C:\\Users\\Usuario\\Downloads\\Imagenes")).load();
+        return new FileImageLoader().load();
     }
 
 }
