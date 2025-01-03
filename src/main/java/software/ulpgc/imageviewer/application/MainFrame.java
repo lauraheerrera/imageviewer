@@ -1,7 +1,6 @@
 package software.ulpgc.imageviewer.application;
 
 import software.ulpgc.imageviewer.control.Command;
-import software.ulpgc.imageviewer.model.Image;
 import software.ulpgc.imageviewer.view.ImageDisplay;
 
 import javax.swing.*;
@@ -49,11 +48,6 @@ public class MainFrame extends JFrame {
     }
     private SwingImageDisplay createImageDisplay() {
         return new SwingImageDisplay(new SwingImageDeserializer());
-    }
-
-    public MainFrame initWith(Image image) {
-        imageDisplay.show(image);
-        return this;
     }
 
     public static MainFrame create() {

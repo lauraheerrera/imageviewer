@@ -2,62 +2,111 @@ package software.ulpgc.imageviewer.application;
 
 import software.ulpgc.imageviewer.io.ImageDeserializer;
 import software.ulpgc.imageviewer.view.ImageDisplay;
-import software.ulpgc.imageviewer.model.Image;
 import software.ulpgc.imageviewer.view.ViewPort;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class SwingImageDisplay extends JPanel implements ImageDisplay {
+    private final List<PaintOrder> orders = new ArrayList<>();
+    private Shift shift = Shift.Null;
+    private Release release = Release.Null;
+    private int initialOffset;
     private final ImageDeserializer deserializer;
-    private Image image;
 
     public SwingImageDisplay(ImageDeserializer deserializer) {
         this.deserializer = deserializer;
-    }
-
-    public Image currentImage() {
-        return image;
-    }
-
-    @Override
-    public void show(Image image) {
-        this.image = image;
-        this.revalidate();
-        this.repaint();
+        this.addMouseListener(mouseListener());
+        this.addMouseMotionListener(mouseMotionListener());
     }
 
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        drawImage(g);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        for(PaintOrder order : orders) paintOrder(g, order);
     }
 
-    private void drawImage(Graphics g) {
-        if (image == null) return;
-        java.awt.Image image = deserialize();
-        Dimension imageSize = calculateNewSize();
-
-        ViewPort viewPort = ViewPort.ofSize(getWidth(), getHeight())
-                .fit(imageSize.width, imageSize.height, this.image.zoomLevel());
-        int xOffset = (getWidth() - viewPort.width()) / 2;
-        int yOffset = (getHeight() - viewPort.height()) / 2;
-
-        g.drawImage(image, xOffset, yOffset, viewPort.width(), viewPort.height(), null);
+    private void paintOrder(Graphics g, PaintOrder order) {
+        BufferedImage image = deserialize(order.content());
+        ViewPort viewPort = viewPortof(image);
+        g.drawImage(image, viewPort.x() + order.offset(), viewPort.y(), viewPort.width(), viewPort.height(), null);
     }
 
-    public java.awt.Image deserialize() {
-        return (java.awt.Image) deserializer.desearilize(image.content());
+    private ViewPort viewPortof(BufferedImage image) {
+        return ViewPort.ofSize(this.getWidth(), this.getHeight())
+                .fit(image.getWidth(null), image.getHeight(null));
     }
 
-    private Dimension calculateNewSize() {
-        if (image == null) return new Dimension(0, 0);
-        java.awt.Image awtImage = deserialize();
-        int originalWidth = awtImage.getWidth(null);
-        int originalHeight = awtImage.getHeight(null);
-        int newWidth = originalWidth * image.zoomLevel() / 100;
-        int newHeight = originalHeight * image.zoomLevel() / 100;
-        return new Dimension(newWidth, newHeight);
+    @Override
+    public int width() {
+        return getWidth();
+    }
+
+    @Override
+    public void paint(PaintOrder... orders) {
+        this.orders.clear();
+        Collections.addAll(this.orders, orders);
+        repaint();
+    }
+
+    @Override
+    public void on(Shift shift) {
+        this.shift = shift != null ? shift : Shift.Null;
+    }
+
+    @Override
+    public void on(Release release) {
+        this.release = release != null ? release : Release.Null;
+    }
+
+    private MouseListener mouseListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialOffset = e.getX();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                release.offset(e.getX() - initialOffset);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+    }
+
+    private MouseMotionListener mouseMotionListener() {
+        return new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                shift.offset(e.getX() - initialOffset);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+            }
+        };
+    }
+
+    private BufferedImage deserialize(byte[] content){
+        return (BufferedImage) deserializer.desearilize(content);
     }
 }
