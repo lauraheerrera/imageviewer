@@ -8,8 +8,6 @@ import software.ulpgc.imageviewer.control.ZoomOutCommand;
 import software.ulpgc.imageviewer.io.FileImageLoader;
 import software.ulpgc.imageviewer.model.Image;
 
-import java.io.File;
-
 public class Main {
     public static void main(String[] args) {
         MainFrame mainFrame = MainFrame.create();

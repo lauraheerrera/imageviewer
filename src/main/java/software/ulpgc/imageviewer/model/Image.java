@@ -8,8 +8,4 @@ public interface Image {
     int zoomLevel();
     void zoomIn();
     void zoomOut();
-
-    enum Format {
-        Jpg, Jpeg, Png, Gif
-    }
 }

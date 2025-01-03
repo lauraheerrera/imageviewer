@@ -3,14 +3,9 @@ package software.ulpgc.imageviewer.io;
 import software.ulpgc.imageviewer.model.Image;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Stream;
-
-import static java.util.Objects.requireNonNull;
 
 public class FileImageLoader implements ImageLoader {
     private final File[] files;
@@ -86,20 +81,5 @@ public class FileImageLoader implements ImageLoader {
                 return index > 0 ? index - 1 : files.length - 1;
             }
         };
-    }
-
-    private FileFilter ofTypeImage() {
-        return f -> validImageExtensions()
-                .anyMatch(e-> fileHasValidExtension(f, e));
-    }
-
-    private Stream<String> validImageExtensions() {
-        return Arrays.stream(Image.Format.values())
-                .map(s->s.name().toLowerCase());
-
-    }
-
-    private static boolean fileHasValidExtension(File f, String e) {
-        return f.getName().toLowerCase().endsWith(e);
     }
 }
