@@ -14,7 +14,7 @@ public class FileImageLoader implements ImageLoader {
         try {
             File folder = new File(Objects.requireNonNull(
                     getClass().getClassLoader().getResource("Images"),
-                    "Folder 'Imagenes' not found in resources"
+                    "Folder 'Images' not found in resources"
             ).toURI());
 
             this.files = folder.listFiles();
@@ -22,7 +22,7 @@ public class FileImageLoader implements ImageLoader {
                 throw new IllegalArgumentException("No valid image files in folder: " + folder.getPath());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error accessing folder 'Imagenes'", e);
+            throw new RuntimeException("Error accessing folder 'Images'", e);
         }
     }
 
