@@ -1,6 +1,5 @@
 package software.ulpgc.imageviewer.view;
 
-import software.ulpgc.imageviewer.control.ImagePresenter;
 import software.ulpgc.imageviewer.model.Image;
 
 public interface ImageDisplay {
@@ -11,7 +10,7 @@ public interface ImageDisplay {
     void on(Shift shift);
     void on(Release release);
 
-    void setPresenter(ImagePresenter imagePresenter);
+    void setZoomHandler(ZoomHandler zoomHandler);
 
     interface Shift {
         Shift Null = _ -> {};
@@ -21,6 +20,14 @@ public interface ImageDisplay {
     interface Release {
         Release Null = _ -> {};
         void offset(int offset);
+    }
+
+    interface ZoomHandler {
+        void zoomIn();
+        void zoomOut();
+    }
+
+    interface ImageChangeHandler {
     }
 
     record PaintOrder(byte[] content, int offset, Image image) {

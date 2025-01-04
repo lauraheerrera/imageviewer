@@ -1,6 +1,5 @@
 package software.ulpgc.imageviewer.application;
 
-import software.ulpgc.imageviewer.control.ImagePresenter;
 import software.ulpgc.imageviewer.io.ImageDeserializer;
 import software.ulpgc.imageviewer.view.ImageDisplay;
 import software.ulpgc.imageviewer.view.ViewPort;
@@ -19,7 +18,8 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     private Release release = Release.Null;
     private int initialOffset;
     private final ImageDeserializer deserializer;
-    private ImagePresenter presenter;
+    private ZoomHandler zoomHandler = null;
+
 
     public SwingImageDisplay(ImageDeserializer deserializer) {
         this.deserializer = deserializer;
@@ -28,14 +28,6 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
         this.addMouseWheelListener(mouseWheelListener());
     }
 
-    @Override
-    public void setPresenter(ImagePresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    private boolean isPresenterInitialized() {
-        return presenter != null;
-    }
 
     @Override
     public void paint(Graphics g) {
@@ -79,6 +71,11 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
         this.release = release != null ? release : Release.Null;
     }
 
+    @Override
+    public void setZoomHandler(ZoomHandler zoomHandler) {
+        this.zoomHandler = zoomHandler;
+    }
+
     private MouseListener mouseListener() {
         return new MouseListener() {
             @Override
@@ -116,23 +113,15 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
 
     private MouseWheelListener mouseWheelListener() {
         return e -> {
-            if (!isPresenterInitialized()) {
-                return;
-            }
+            if (zoomHandler == null) return;
 
-            int sensitivity = 1;
             if (e.getWheelRotation() < 0) {
-                for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
-                    presenter.zoomIn();
-                }
+                zoomHandler.zoomIn();
             } else {
-                for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
-                    presenter.zoomOut();
-                }
+                zoomHandler.zoomOut();
             }
         };
     }
-
     private BufferedImage deserialize(byte[] content){
         return (BufferedImage) deserializer.desearilize(content);
     }

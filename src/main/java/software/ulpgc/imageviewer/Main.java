@@ -10,14 +10,14 @@ public class Main {
         MainFrame mainFrame = MainFrame.create();
         Image firstImage = new FileImageLoader().load();
         ImagePresenter imagePresenter = new ImagePresenter(mainFrame.imageDisplay());
-        mainFrame.imageDisplay().setPresenter(imagePresenter);
 
         imagePresenter.show(firstImage);
+
         mainFrame
                 .add(">>", new NextCommand(imagePresenter))
                 .add("<<", new PreviousCommand(imagePresenter))
-                .add("\uD83D\uDD0D\u2795", new ZoomInCommand(imagePresenter))
-                .add("\uD83D\uDD0D\u2796", new ZoomOutCommand(imagePresenter))
+                .add("\uD83D\uDD0D➕", new ZoomInCommand(imagePresenter))
+                .add("\uD83D\uDD0D➖", new ZoomOutCommand(imagePresenter))
                 .setVisible(true);
     }
 }

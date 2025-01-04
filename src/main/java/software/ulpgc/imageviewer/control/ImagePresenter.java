@@ -2,9 +2,10 @@ package software.ulpgc.imageviewer.control;
 
 import software.ulpgc.imageviewer.model.Image;
 import software.ulpgc.imageviewer.view.ImageDisplay;
-import software.ulpgc.imageviewer.view.ImageDisplay.PaintOrder;
 
-public class ImagePresenter {
+import static software.ulpgc.imageviewer.view.ImageDisplay.*;
+
+public class ImagePresenter implements ZoomHandler, ImageChangeHandler {
     private final ImageDisplay display;
     private Image image;
 
@@ -12,16 +13,7 @@ public class ImagePresenter {
         this.display = display;
         this.display.on(shift());
         this.display.on(released());
-    }
-
-    public void zoomIn() {
-        image.zoomIn();
-        display.paint(paintOrderForCurrentImageWith(0));
-    }
-
-    public void zoomOut() {
-        image.zoomOut();
-        display.paint(paintOrderForCurrentImageWith(0));
+        this.display.setZoomHandler(this);
     }
 
     public void show(Image image) {
@@ -29,11 +21,23 @@ public class ImagePresenter {
         this.display.paint(paintOrderForCurrentImageWith(0));
     }
 
+    @Override
+    public void zoomIn() {
+        image.zoomIn();
+        display.paint(paintOrderForCurrentImageWith(0));
+    }
+
+    @Override
+    public void zoomOut() {
+        image.zoomOut();
+        display.paint(paintOrderForCurrentImageWith(0));
+    }
+
     public Image getCurrentImage() {
         return image;
     }
 
-    private ImageDisplay.Shift shift() {
+    private Shift shift() {
         return offset -> display.paint(
                 paintOrderForCurrentImageWith(offset),
                 isDisplayingPreviousImageOn(offset) ?
@@ -42,7 +46,7 @@ public class ImagePresenter {
         );
     }
 
-    private ImageDisplay.Release released() {
+    private Release released() {
         return offset -> {
             changeCurrentImageOn(offset);
             display.paint(paintOrderForCurrentImageWith(0));
@@ -68,11 +72,11 @@ public class ImagePresenter {
         return new PaintOrder(image.content(), offset, image);
     }
 
-    private PaintOrder paintOrderForPreviousImageWith(int offset) {
-        return new PaintOrder(image.previous().content(), offset, image);
-    }
-
     private PaintOrder paintOrderForNextImageWith(int offset) {
         return new PaintOrder(image.next().content(), offset, image);
+    }
+
+    private PaintOrder paintOrderForPreviousImageWith(int offset) {
+        return new PaintOrder(image.previous().content(), offset, image);
     }
 }

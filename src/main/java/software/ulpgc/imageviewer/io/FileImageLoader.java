@@ -70,15 +70,22 @@ public class FileImageLoader implements ImageLoader {
             }
 
             private File currentFile() {
+                assert files != null;
                 return files[index];
             }
 
             private int previousIndex() {
+                assert files != null;
                 return (index + 1) % files.length;
             }
 
             private int nextIndex() {
-                return index > 0 ? index - 1 : files.length - 1;
+                if (index > 0) {
+                    return index - 1;
+                } else {
+                    assert files != null;
+                    return files.length - 1;
+                }
             }
         };
     }

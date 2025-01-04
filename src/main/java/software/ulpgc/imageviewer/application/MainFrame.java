@@ -1,7 +1,6 @@
 package software.ulpgc.imageviewer.application;
 
 import software.ulpgc.imageviewer.control.Command;
-import software.ulpgc.imageviewer.control.ImagePresenter;
 import software.ulpgc.imageviewer.view.ImageDisplay;
 
 import javax.swing.*;
@@ -24,17 +23,14 @@ public class MainFrame extends JFrame {
         this.imageDisplay = createImageDisplay();
         this.add(imageDisplay, BorderLayout.CENTER);
         this.add(createToolBar(), BorderLayout.SOUTH);
-
-        ImagePresenter presenter = new ImagePresenter(imageDisplay);
-        imageDisplay.setPresenter(presenter);
     }
 
     private Component createToolBar() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.add(createButton("<<"));
         panel.add(createButton(">>"));
-        panel.add(createButton("\uD83D\uDD0D\u2795"));
-        panel.add(createButton("\uD83D\uDD0D\u2796"));
+        panel.add(createButton("\uD83D\uDD0D➕"));
+        panel.add(createButton("\uD83D\uDD0D➖"));
         return panel;
     }
 
