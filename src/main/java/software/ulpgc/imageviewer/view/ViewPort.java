@@ -8,13 +8,18 @@ public record ViewPort(int x, int y, int width, int height) {
         int zoomedWidth = imageWidth * zoomLevel / 100;
         int zoomedHeight = imageHeight * zoomLevel / 100;
 
-        if (canFit(zoomedWidth, zoomedHeight)) {
-            return centeredViewPort(zoomedWidth, zoomedHeight);
+        if (zoomedWidth > this.width || zoomedHeight > this.height) {
+            return new ViewPort(xCenterFor(zoomedWidth), yCenterFor(zoomedHeight), zoomedWidth, zoomedHeight);
         }
 
-        return shouldScaleWidth(zoomedWidth, zoomedHeight) ?
-                fitToWidthViewPort(zoomedWidth, zoomedHeight) :
-                fitToHeightViewPort(zoomedWidth, zoomedHeight);
+        else{
+            if (canFit(zoomedWidth, zoomedHeight)) {
+                return centeredViewPort(zoomedWidth, zoomedHeight);
+            }
+            return shouldScaleWidth(zoomedWidth, zoomedHeight) ?
+                    fitToWidthViewPort(zoomedWidth, zoomedHeight) :
+                    fitToHeightViewPort(zoomedWidth, zoomedHeight);
+        }
     }
 
     private boolean shouldScaleWidth(int width, int height) {
