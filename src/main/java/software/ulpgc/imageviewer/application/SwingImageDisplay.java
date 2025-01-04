@@ -115,22 +115,19 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     }
 
     private MouseWheelListener mouseWheelListener() {
-        return new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (!isPresenterInitialized()) {
-                    return;
-                }
+        return e -> {
+            if (!isPresenterInitialized()) {
+                return;
+            }
 
-                int sensitivity = 10;
-                if (e.getWheelRotation() < 0) {
-                    for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
-                        presenter.zoomIn();
-                    }
-                } else {
-                    for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
-                        presenter.zoomOut();
-                    }
+            int sensitivity = 1;
+            if (e.getWheelRotation() < 0) {
+                for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
+                    presenter.zoomIn();
+                }
+            } else {
+                for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
+                    presenter.zoomOut();
                 }
             }
         };
