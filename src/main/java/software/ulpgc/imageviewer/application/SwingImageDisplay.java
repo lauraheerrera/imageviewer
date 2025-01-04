@@ -1,14 +1,13 @@
 package software.ulpgc.imageviewer.application;
 
+import software.ulpgc.imageviewer.control.ImagePresenter;
 import software.ulpgc.imageviewer.io.ImageDeserializer;
 import software.ulpgc.imageviewer.view.ImageDisplay;
 import software.ulpgc.imageviewer.view.ViewPort;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,29 +19,42 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     private Release release = Release.Null;
     private int initialOffset;
     private final ImageDeserializer deserializer;
+    private ImagePresenter presenter;
 
     public SwingImageDisplay(ImageDeserializer deserializer) {
         this.deserializer = deserializer;
         this.addMouseListener(mouseListener());
         this.addMouseMotionListener(mouseMotionListener());
+        this.addMouseWheelListener(mouseWheelListener());
+    }
+
+    @Override
+    public void setPresenter(ImagePresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    private boolean isPresenterInitialized() {
+        return presenter != null;
     }
 
     @Override
     public void paint(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        for(PaintOrder order : orders) paintOrder(g, order);
+        for(PaintOrder order : orders) {
+            paintOrder(g, order);
+        }
     }
 
     private void paintOrder(Graphics g, PaintOrder order) {
         BufferedImage image = deserialize(order.content());
-        ViewPort viewPort = viewPortof(image);
+        ViewPort viewPort = viewPortOf(image, order.getImage().zoomLevel());
         g.drawImage(image, viewPort.x() + order.offset(), viewPort.y(), viewPort.width(), viewPort.height(), null);
     }
 
-    private ViewPort viewPortof(BufferedImage image) {
+    private ViewPort viewPortOf(BufferedImage image, int zoomLevel) {
         return ViewPort.ofSize(this.getWidth(), this.getHeight())
-                .fit(image.getWidth(null), image.getHeight(null));
+                .fit(image.getWidth(null), image.getHeight(null), zoomLevel);
     }
 
     @Override
@@ -70,10 +82,6 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
     private MouseListener mouseListener() {
         return new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
             public void mousePressed(MouseEvent e) {
                 initialOffset = e.getX();
             }
@@ -84,12 +92,13 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
             }
 
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) {}
 
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
         };
     }
 
@@ -101,7 +110,28 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {}
+        };
+    }
+
+    private MouseWheelListener mouseWheelListener() {
+        return new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (!isPresenterInitialized()) {
+                    return;
+                }
+
+                int sensitivity = 10;
+                if (e.getWheelRotation() < 0) {
+                    for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
+                        presenter.zoomIn();
+                    }
+                } else {
+                    for (int i = 0; i < Math.abs(e.getWheelRotation()) * sensitivity; i++) {
+                        presenter.zoomOut();
+                    }
+                }
             }
         };
     }

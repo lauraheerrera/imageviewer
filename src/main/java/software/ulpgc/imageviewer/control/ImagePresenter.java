@@ -14,6 +14,16 @@ public class ImagePresenter {
         this.display.on(released());
     }
 
+    public void zoomIn() {
+        image.zoomIn();
+        display.paint(paintOrderForCurrentImageWith(0));
+    }
+
+    public void zoomOut() {
+        image.zoomOut();
+        display.paint(paintOrderForCurrentImageWith(0));
+    }
+
     public void show(Image image) {
         this.image = image;
         this.display.paint(paintOrderForCurrentImageWith(0));
@@ -25,10 +35,10 @@ public class ImagePresenter {
 
     private ImageDisplay.Shift shift() {
         return offset -> display.paint(
-            paintOrderForCurrentImageWith(offset),
-            isDisplayingPreviousImageOn(offset) ?
-                    paintOrderForPreviousImageWith(offset - display.width()) :
-                    paintOrderForNextImageWith(display.width() + offset)
+                paintOrderForCurrentImageWith(offset),
+                isDisplayingPreviousImageOn(offset) ?
+                        paintOrderForPreviousImageWith(offset - display.width()) :
+                        paintOrderForNextImageWith(display.width() + offset)
         );
     }
 
@@ -55,14 +65,14 @@ public class ImagePresenter {
     }
 
     private PaintOrder paintOrderForCurrentImageWith(int offset) {
-        return new PaintOrder(image.content(), offset);
+        return new PaintOrder(image.content(), offset, image);
     }
 
     private PaintOrder paintOrderForPreviousImageWith(int offset) {
-        return new PaintOrder(image.previous().content(), offset);
+        return new PaintOrder(image.previous().content(), offset, image);
     }
 
     private PaintOrder paintOrderForNextImageWith(int offset) {
-        return new PaintOrder(image.next().content(), offset);
+        return new PaintOrder(image.next().content(), offset, image);
     }
 }
