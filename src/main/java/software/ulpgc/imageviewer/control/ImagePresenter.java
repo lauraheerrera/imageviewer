@@ -33,6 +33,12 @@ public class ImagePresenter implements ZoomHandler, ImageChangeHandler {
         display.paint(paintOrderForCurrentImageWith(0));
     }
 
+    @Override
+    public void resetZoom() {
+        image.resetZoom();
+        display.paint(paintOrderForCurrentImageWith(0));
+    }
+
     public Image getCurrentImage() {
         return image;
     }

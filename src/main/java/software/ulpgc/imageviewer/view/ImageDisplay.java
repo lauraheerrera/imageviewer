@@ -25,6 +25,7 @@ public interface ImageDisplay {
     interface ZoomHandler {
         void zoomIn();
         void zoomOut();
+        void resetZoom();
     }
 
     interface ImageChangeHandler {

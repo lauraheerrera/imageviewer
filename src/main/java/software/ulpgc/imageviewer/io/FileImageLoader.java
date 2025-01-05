@@ -69,6 +69,11 @@ public class FileImageLoader implements ImageLoader {
                 zoomLevel = Math.max(zoomLevel - 10, 10);
             }
 
+            @Override
+            public void resetZoom() {
+                zoomLevel = 50;
+            }
+
             private File currentFile() {
                 assert files != null;
                 return files[index];

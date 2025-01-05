@@ -8,4 +8,5 @@ public interface Image {
     int zoomLevel();
     void zoomIn();
     void zoomOut();
+    void resetZoom();
 }

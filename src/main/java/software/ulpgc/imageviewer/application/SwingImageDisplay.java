@@ -89,7 +89,13 @@ public class SwingImageDisplay extends JPanel implements ImageDisplay {
             }
 
             @Override
-            public void mouseClicked(MouseEvent e) {}
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() >= 2) {
+                    if (zoomHandler != null) {
+                        zoomHandler.resetZoom();
+                    }
+                }
+            }
 
             @Override
             public void mouseEntered(MouseEvent e) {}
